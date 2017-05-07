@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var serverLine = regexp.MustCompile(`server ([^;]+);`)
+var serverLine = regexp.MustCompile(`server_name ([^;]+);`)
 
 func collectServerNames() ([]string, error) {
 	serverNames := []string{}
