@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/Luzifer/go_helpers/str"
 )
 
 var serverLine = regexp.MustCompile(`server_name ([^;]+);`)
@@ -47,7 +49,9 @@ func collectServerNameGroups(in []string, err error) (map[string][]string, error
 		}
 
 		r := res[sec]
-		r = append(r, fqdn)
+		if !str.StringInSlice(fqdn, r) {
+			r = append(r, fqdn)
+		}
 		r = domainSort(r)
 		res[sec] = r
 	}
