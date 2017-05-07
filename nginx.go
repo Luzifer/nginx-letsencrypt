@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"log"
 	"os"
 	"regexp"
 	"sort"
@@ -15,21 +16,19 @@ var serverLine = regexp.MustCompile(`server_name ([^;]+);`)
 func collectServerNames() ([]string, error) {
 	serverNames := []string{}
 
-	for _, filename := range cfg.NginxConfigs {
-		if filename == "" {
-			continue
-		}
+	if cfg.NginxConfig == "" {
+		log.Fatalf("nginx-config is a required parameter")
+	}
 
-		f, err := os.Open(filename)
-		if err != nil {
-			return serverNames, err
-		}
+	f, err := os.Open(cfg.NginxConfig)
+	if err != nil {
+		return serverNames, err
+	}
 
-		scanner := bufio.NewScanner(f)
-		for scanner.Scan() {
-			if serverLine.MatchString(scanner.Text()) {
-				serverNames = append(serverNames, strings.Split(serverLine.FindStringSubmatch(scanner.Text())[1], " ")...)
-			}
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		if serverLine.MatchString(scanner.Text()) {
+			serverNames = append(serverNames, strings.Split(serverLine.FindStringSubmatch(scanner.Text())[1], " ")...)
 		}
 	}
 

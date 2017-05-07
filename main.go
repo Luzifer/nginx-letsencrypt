@@ -1,8 +1,12 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"os/exec"
+	"syscall"
 	"time"
 
 	"github.com/Luzifer/rconfig"
@@ -14,15 +18,18 @@ import (
 var (
 	cfg = struct {
 		BufferTime     time.Duration `flag:"buffer" default:"360h" description:"How long before expiry to mark the certificate not longer fine"`
-		NginxConfigs   []string      `flag:"nginx-config" description:"Config files to collect server names from"`
+		NginxConfig    string        `flag:"nginx-config" description:"Config file to collect server names and start nginx from"`
 		Email          string        `flag:"email" description:"Email for registration with LetsEncrypt"`
-		ListenHTTP     string        `flag:"listen-http" default:":5002" description:"IP/Port to listen on for challenge proxying"`
+		ListenHTTP     string        `flag:"listen-http" default:":5001" description:"IP/Port to listen on for challenge proxying"`
 		ACMEServer     string        `flag:"server" default:"https://acme-v01.api.letsencrypt.org/directory" description:"ACME URL"`
 		StorageDir     string        `flag:"storage-dir" default:"~/.config/nginx-letsencrypt" description:"Directory to cache registration"`
 		VersionAndExit bool          `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
 
 	version = "dev"
+
+	nginx         *exec.Cmd
+	configVersion string
 )
 
 func init() {
@@ -72,20 +79,69 @@ func main() {
 	client.SetHTTPAddress(cfg.ListenHTTP)
 	client.ExcludeChallenges([]acme.Challenge{acme.TLSSNI01, acme.DNS01})
 
+	go func() {
+		manageNginxConfig(client)
+		for range time.Tick(time.Minute) {
+			manageNginxConfig(client)
+		}
+	}()
+
+	for {
+		nginx = exec.Command("nginx", "-c", cfg.NginxConfig, "-g", "daemon off;")
+		nginx.Stdout = os.Stdout
+		nginx.Stderr = os.Stderr
+		log.Errorf("nginx process ended: %s", nginx.Run())
+		<-time.After(500 * time.Millisecond)
+	}
+}
+
+func manageNginxConfig(client *acme.Client) {
+	var (
+		currentConfigVersion = hashFile(cfg.NginxConfig)
+		needsReload          = currentConfigVersion != configVersion
+	)
+
 	nameGroups, err := collectServerNameGroups(collectServerNames())
 	if err != nil {
 		log.Fatalf("Unable to collect server names: %s", err)
 	}
 
+	if err := ensureCertFiles(nameGroups); err != nil {
+		log.Fatalf("Unable to link initial certificates: %s", err)
+	}
+
+	for nginx == nil || nginx.Process == nil {
+		// Don't start executing certificate fetch if server is not running, we need it
+		<-time.After(100 * time.Millisecond)
+	}
+
 	hadErrors := false
 	for sld, domains := range nameGroups {
-		if err := createCertificate(client, sld, domains); err != nil {
+		if newCert, err := createCertificate(client, sld, domains); err != nil {
 			log.Errorf("Failed to create certificate for second level domain %q: %s", sld, err)
 			hadErrors = true
+		} else {
+			if newCert {
+				needsReload = true
+			}
 		}
 	}
 
 	if hadErrors {
-		log.Fatalf("At least one second level domain had errors, failing now.")
+		return
 	}
+
+	if needsReload && nginx != nil {
+		log.Infof("Reloading nginx to apply config / certificates")
+		nginx.Process.Signal(syscall.SIGHUP)
+		configVersion = currentConfigVersion
+	}
+}
+
+func hashFile(filename string) string {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatalf("Unable to read nginx config: %s", err)
+	}
+	return fmt.Sprintf("%x", sha256.Sum256(data))
 }

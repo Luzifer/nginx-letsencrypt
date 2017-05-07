@@ -15,18 +15,18 @@ import (
 	"github.com/xenolf/lego/acme"
 )
 
-func createCertificate(client *acme.Client, sld string, domains []string) error {
+func createCertificate(client *acme.Client, sld string, domains []string) (bool, error) {
 	certsPath := path.Join(cfg.StorageDir, "certs")
 	if err := os.MkdirAll(certsPath, 0755); err != nil {
-		return fmt.Errorf("Unable to create certs storage directory: %s", err)
+		return false, fmt.Errorf("Unable to create certs storage directory: %s", err)
 	}
 
 	if _, err := os.Stat(path.Join(certsPath, sld+".pem")); err == nil {
 		if certOK, err := verifyCertificate(path.Join(certsPath, sld+".pem"), sld, domains); err != nil {
-			return err
+			return false, err
 		} else {
 			if certOK {
-				return nil
+				return false, nil
 			}
 		}
 	}
@@ -38,34 +38,34 @@ func createCertificate(client *acme.Client, sld string, domains []string) error 
 				"domain": d,
 			}).Error(err.Error())
 		}
-		return fmt.Errorf("Errors were recorded for certificate")
+		return false, fmt.Errorf("Errors were recorded for certificate")
 	}
 
 	pkFile, err := os.Create(path.Join(certsPath, sld+".key"))
 	if err != nil {
-		return fmt.Errorf("Unable to create private key file: %s", err)
+		return false, fmt.Errorf("Unable to create private key file: %s", err)
 	}
 	defer pkFile.Close()
 
 	if _, err := pkFile.Write(certs.PrivateKey); err != nil {
-		return fmt.Errorf("Unable to write private key: %s", err)
+		return false, fmt.Errorf("Unable to write private key: %s", err)
 	}
 
 	crtFile, err := os.Create(path.Join(certsPath, sld+".pem"))
 	if err != nil {
-		return err
+		return false, err
 	}
 	defer crtFile.Close()
 
 	if _, err := fmt.Fprintf(crtFile, "%s\n%s", certs.Certificate, certs.IssuerCertificate); err != nil {
-		return fmt.Errorf("Unable to write certificate: %s", err)
+		return false, fmt.Errorf("Unable to write certificate: %s", err)
 	}
 
 	log.WithFields(log.Fields{
 		"domain": sld,
 	}).Infof("Wrote new certificate")
 
-	return nil
+	return true, nil
 }
 
 func verifyCertificate(filename, sld string, expectedDomains []string) (bool, error) {
