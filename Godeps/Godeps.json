@@ -4,6 +4,11 @@
 	"GodepVersion": "v79",
 	"Deps": [
 		{
+			"ImportPath": "github.com/Luzifer/go_helpers/str",
+			"Comment": "v2.2.0",
+			"Rev": "e31c3a2659d3f4901f696692cfe98bd0eb5168f9"
+		},
+		{
 			"ImportPath": "github.com/Luzifer/rconfig",
 			"Comment": "v1.1.0",
 			"Rev": "c27bd3a64b5b19556914d9fec69922cf3852d585"
