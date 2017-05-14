@@ -1,3 +1,7 @@
+# 0.1.3 / 2017-05-14
+
+  * Fix: Improve logging and error handling
+
 # 0.1.2 / 2017-05-14
 
   * Fix: Don't match lines commented out
