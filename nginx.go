@@ -11,7 +11,7 @@ import (
 	"github.com/Luzifer/go_helpers/str"
 )
 
-var serverLine = regexp.MustCompile(`server_name ([^;]+);`)
+var serverLine = regexp.MustCompile(`^\s*server_name ([^;]+);`)
 
 func collectServerNames() ([]string, error) {
 	serverNames := []string{}
