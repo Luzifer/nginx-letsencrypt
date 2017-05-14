@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/Luzifer/go_helpers/str"
-	log "github.com/sirupsen/logrus"
+	log "github.com/Sirupsen/logrus"
 )
 
-var serverLine = regexp.MustCompile(`^\s*server_name ([^;]+);`)
+var serverLine = regexp.MustCompile(`^\s*server_name +([^;]+);`)
 
 func collectServerNames() ([]string, error) {
 	serverNames := []string{}
