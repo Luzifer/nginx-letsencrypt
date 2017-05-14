@@ -21,6 +21,7 @@ var (
 		NginxConfig    string        `flag:"nginx-config" description:"Config file to collect server names and start nginx from"`
 		Email          string        `flag:"email" description:"Email for registration with LetsEncrypt"`
 		ListenHTTP     string        `flag:"listen-http" default:":5001" description:"IP/Port to listen on for challenge proxying"`
+		LogLevel       string        `flag:"log-level" default:"info" description:"Log level to use (debug, info, warning, error, ...)"`
 		ACMEServer     string        `flag:"server" default:"https://acme-v01.api.letsencrypt.org/directory" description:"ACME URL"`
 		StorageDir     string        `flag:"storage-dir" default:"~/.config/nginx-letsencrypt" description:"Directory to cache registration"`
 		VersionAndExit bool          `flag:"version" default:"false" description:"Prints current version and exits"`
@@ -46,6 +47,12 @@ func init() {
 		log.Fatalf("Failed to expand storage dir: %s", err)
 	} else {
 		cfg.StorageDir = ep
+	}
+
+	if lvl, err := log.ParseLevel(cfg.LogLevel); err == nil {
+		log.SetLevel(lvl)
+	} else {
+		log.Fatalf("Failed to parse log level: %s", err)
 	}
 }
 

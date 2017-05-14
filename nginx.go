@@ -2,13 +2,13 @@ package main
 
 import (
 	"bufio"
-	"log"
 	"os"
 	"regexp"
 	"sort"
 	"strings"
 
 	"github.com/Luzifer/go_helpers/str"
+	log "github.com/sirupsen/logrus"
 )
 
 var serverLine = regexp.MustCompile(`^\s*server_name ([^;]+);`)
@@ -28,7 +28,9 @@ func collectServerNames() ([]string, error) {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		if serverLine.MatchString(scanner.Text()) {
-			serverNames = append(serverNames, strings.Split(serverLine.FindStringSubmatch(scanner.Text())[1], " ")...)
+			extractedNames := strings.Split(serverLine.FindStringSubmatch(scanner.Text())[1], " ")
+			log.Debugf("Discovered server_name line %q with names: %v", scanner.Text(), extractedNames)
+			serverNames = append(serverNames, extractedNames...)
 		}
 	}
 
@@ -42,6 +44,10 @@ func collectServerNameGroups(in []string, err error) (map[string][]string, error
 
 	res := map[string][]string{}
 	for _, fqdn := range in {
+		if fqdn == "" {
+			continue
+		}
+
 		sec := secondLevelDomain(fqdn)
 		if _, ok := res[sec]; !ok {
 			res[sec] = []string{}
@@ -67,7 +73,14 @@ func domainSort(in []string) []string {
 
 func secondLevelDomain(fqdn string) string {
 	rev := reversedFQDN(fqdn)
-	rev2nd := strings.Join(strings.Split(rev, ".")[0:2], ".")
+
+	domainParts := strings.Split(rev, ".")
+	if len(domainParts) < 2 {
+		log.Errorf("Found domain name with less than two parts: %q (rev %q)", fqdn, rev)
+		return ""
+	}
+
+	rev2nd := strings.Join(domainParts[0:2], ".")
 	second := reversedFQDN(rev2nd)
 
 	return second
