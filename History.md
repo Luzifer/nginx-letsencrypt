@@ -1,3 +1,7 @@
+# 0.1.4 / 2017-05-14
+
+  * Fix: Wrong import / space matching
+
 # 0.1.3 / 2017-05-14
 
   * Fix: Improve logging and error handling
