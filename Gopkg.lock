@@ -10,18 +10,20 @@
 [[projects]]
   name = "github.com/Luzifer/rconfig"
   packages = ["."]
-  revision = "c27bd3a64b5b19556914d9fec69922cf3852d585"
-  version = "v1.1.0"
+  revision = "7aef1d393c1e2d0758901853b59981c7adc67c7e"
+  version = "v1.2.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/miekg/dns"
   packages = ["."]
-  revision = "f282f80e243cc2bf8f6410c30d821b93b794e168"
+  revision = "e4205768578dc90c2669e75a2f8a8bf77e3083a4"
 
 [[projects]]
+  branch = "master"
   name = "github.com/mitchellh/go-homedir"
   packages = ["."]
-  revision = "981ab348d865cf048eb7d17e78ac7192632d8415"
+  revision = "b8bc1bf767474819792c23f32d8286a45736f1c6"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
@@ -32,7 +34,8 @@
 [[projects]]
   name = "github.com/spf13/pflag"
   packages = ["."]
-  revision = "c7e63cf4530bcd3ba943729cee0efeff2ebea63f"
+  revision = "e57e3eeb33f795204c1ca35f56c44f83227c6e66"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/xenolf/lego"
@@ -41,19 +44,22 @@
   version = "v0.4.0"
 
 [[projects]]
+  branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ocsp","ssh/terminal"]
-  revision = "5a033cc77e57eca05bdb50522851d29e03569cbe"
+  revision = "81e90905daefcd6fd217b62423c0908922eadb30"
 
 [[projects]]
+  branch = "master"
   name = "golang.org/x/net"
   packages = ["idna","publicsuffix"]
-  revision = "feeb485667d1fdabe727840fe00adc22431bc86e"
+  revision = "66aacef3dd8a676686c7ae3716979581e8b03c47"
 
 [[projects]]
+  branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix"]
-  revision = "8f0908ab3b2457e2e15403d3697c9ef5cb4b57a9"
+  packages = ["unix","windows"]
+  revision = "9aade4d3a3b7e6d876cd3823ad20ec45fc035402"
 
 [[projects]]
   branch = "master"
@@ -68,13 +74,20 @@
   version = "v1.1.0"
 
 [[projects]]
+  branch = "v2"
+  name = "gopkg.in/validator.v2"
+  packages = ["."]
+  revision = "460c83432a98c35224a6fe352acf8b23e067ad06"
+
+[[projects]]
+  branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "31c299268d302dd0aa9a0dcf765a3d58971ac83f"
+  revision = "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f33a68c71b4efce43f003a6bd06edc1a1364d0cdd5153bea0a729d2b52e25afc"
+  inputs-digest = "00a8a0b7024e28e4005c3df7dc71d50b04a37a30204a75d965e7b55d069df1a2"
   solver-name = "gps-cdcl"
   solver-version = 1

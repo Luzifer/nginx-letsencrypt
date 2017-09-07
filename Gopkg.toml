@@ -23,15 +23,15 @@
 
 [[constraint]]
   name = "github.com/Luzifer/go_helpers"
-  version = "2.2.0"
+  version = "^2.2.0"
 
 [[constraint]]
   name = "github.com/Luzifer/rconfig"
-  version = "1.1.0"
+  version = "^1.1.0"
 
 [[constraint]]
   name = "github.com/sirupsen/logrus"
-  version = "0.10.0-38-g3ec0642"
+  version = "^1.0.3"
 
 [[constraint]]
   name = "github.com/xenolf/lego"
