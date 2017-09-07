@@ -1,3 +1,10 @@
+# 0.2.0 / 2017-09-07
+
+  * Update dependencies
+  * Move from godep to dep
+  * Provide Docker container
+  * Add environment vars for config options
+
 # 0.1.4 / 2017-05-14
 
   * Fix: Wrong import / space matching
