@@ -17,13 +17,13 @@ import (
 
 var (
 	cfg = struct {
-		BufferTime     time.Duration `flag:"buffer" default:"360h" description:"How long before expiry to mark the certificate not longer fine"`
-		NginxConfig    string        `flag:"nginx-config" description:"Config file to collect server names and start nginx from"`
-		Email          string        `flag:"email" description:"Email for registration with LetsEncrypt"`
+		BufferTime     time.Duration `flag:"buffer" env:"BUFFER" default:"360h" description:"How long before expiry to mark the certificate not longer fine"`
+		NginxConfig    string        `flag:"nginx-config" env:"NGINX_CONFIG" description:"Config file to collect server names and start nginx from"`
+		Email          string        `flag:"email" env:"EMAIL" description:"Email for registration with LetsEncrypt"`
 		ListenHTTP     string        `flag:"listen-http" default:":5001" description:"IP/Port to listen on for challenge proxying"`
 		LogLevel       string        `flag:"log-level" default:"info" description:"Log level to use (debug, info, warning, error, ...)"`
 		ACMEServer     string        `flag:"server" default:"https://acme-v01.api.letsencrypt.org/directory" description:"ACME URL"`
-		StorageDir     string        `flag:"storage-dir" default:"~/.config/nginx-letsencrypt" description:"Directory to cache registration"`
+		StorageDir     string        `flag:"storage-dir" env:"STORAGE_DIR" default:"~/.config/nginx-letsencrypt" description:"Directory to cache registration"`
 		VersionAndExit bool          `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
 
