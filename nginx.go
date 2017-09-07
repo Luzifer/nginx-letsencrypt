@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/Luzifer/go_helpers/str"
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 var serverLine = regexp.MustCompile(`^\s*server_name +([^;]+);`)

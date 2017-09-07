@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/Luzifer/rconfig"
-	log "github.com/Sirupsen/logrus"
 	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/xenolf/lego/acme"
 )
 
