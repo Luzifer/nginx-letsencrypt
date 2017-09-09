@@ -11,7 +11,7 @@ ADD . /go/src/github.com/Luzifer/nginx-letsencrypt
 WORKDIR /go/src/github.com/Luzifer/nginx-letsencrypt
 
 RUN set -ex \
- && apk add --update git ca-certificates \
+ && apk add --update git ca-certificates nginx \
  && go install -ldflags "-X main.version=$(git describe --tags || git rev-parse --short HEAD || echo dev)" \
  && apk del --purge git
 
