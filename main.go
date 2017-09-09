@@ -17,7 +17,7 @@ import (
 
 var (
 	cfg = struct {
-		BufferTime     time.Duration `flag:"buffer" env:"BUFFER" default:"360h" description:"How long before expiry to mark the certificate not longer fine"`
+		BufferTime     time.Duration `flag:"buffer" env:"BUFFER" default:"720h" description:"How long before expiry to mark the certificate not longer fine"`
 		NginxConfig    string        `flag:"nginx-config" env:"NGINX_CONFIG" description:"Config file to collect server names and start nginx from"`
 		Email          string        `flag:"email" env:"EMAIL" description:"Email for registration with LetsEncrypt"`
 		ListenHTTP     string        `flag:"listen-http" default:":5001" description:"IP/Port to listen on for challenge proxying"`
