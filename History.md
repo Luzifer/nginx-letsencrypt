@@ -1,3 +1,8 @@
+# 0.3.0 / 2017-10-17
+
+  * Make private key type configurable
+  * Increase default buffer time to 720h
+
 # 0.2.0 / 2017-09-07
 
   * Update dependencies
