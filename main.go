@@ -20,6 +20,7 @@ var (
 		BufferTime     time.Duration `flag:"buffer" env:"BUFFER" default:"720h" description:"How long before expiry to mark the certificate not longer fine"`
 		NginxConfig    string        `flag:"nginx-config" env:"NGINX_CONFIG" description:"Config file to collect server names and start nginx from"`
 		Email          string        `flag:"email" env:"EMAIL" description:"Email for registration with LetsEncrypt"`
+		KeyType        string        `flag:"key-type" env:"KEY_TYPE" default:"RSA2048" description:"Type of private key to generate (RSA2048, RSA4096, RSA8192, EC256, EC384)"`
 		ListenHTTP     string        `flag:"listen-http" default:":5001" description:"IP/Port to listen on for challenge proxying"`
 		LogLevel       string        `flag:"log-level" default:"info" description:"Log level to use (debug, info, warning, error, ...)"`
 		ACMEServer     string        `flag:"server" default:"https://acme-v01.api.letsencrypt.org/directory" description:"ACME URL"`
@@ -56,13 +57,35 @@ func init() {
 	}
 }
 
+func optToKeyType(opt string) (acme.KeyType, error) {
+	switch opt {
+	case "RSA2048":
+		return acme.RSA2048, nil
+	case "RSA4096":
+		return acme.RSA4096, nil
+	case "RSA8192":
+		return acme.RSA8192, nil
+	case "EC256":
+		return acme.EC256, nil
+	case "EC384":
+		return acme.EC384, nil
+	default:
+		return acme.KeyType(""), fmt.Errorf("Unknown key type %q", opt)
+	}
+}
+
 func main() {
 	myUser, err := loadOrCreateUser()
 	if err != nil {
 		log.Fatalf("Unable to load / create user: %s", err)
 	}
 
-	client, err := acme.NewClient(cfg.ACMEServer, myUser, acme.RSA2048)
+	kt, err := optToKeyType(cfg.KeyType)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client, err := acme.NewClient(cfg.ACMEServer, myUser, kt)
 	if err != nil {
 		log.Fatal(err)
 	}
